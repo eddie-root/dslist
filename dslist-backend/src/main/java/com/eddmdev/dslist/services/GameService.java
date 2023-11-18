@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.eddmdev.dslist.dto.GameDTO;
 import com.eddmdev.dslist.dto.GameMinDTO;
 import com.eddmdev.dslist.entities.Game;
+import com.eddmdev.dslist.projections.GameMinProjection;
 import com.eddmdev.dslist.repositories.GameRepository;
 
 
@@ -18,6 +19,7 @@ public class GameService {
 	@Autowired
 	private GameRepository gameRepository;
 
+	@Transactional(readOnly = true)
 	public List<GameMinDTO> findAll() {
 		List<Game> result = gameRepository.findAll();
 		List<GameMinDTO> dto = result.stream().map(x -> new GameMinDTO(x)).toList();
@@ -29,6 +31,13 @@ public class GameService {
 		Game result = gameRepository.findById(id).get();
 		GameDTO dto = new GameDTO(result);
 		return dto;		
+	}
+	
+	@Transactional(readOnly = true)
+	public List<GameMinDTO> findByList(Long listId) {
+		List<GameMinProjection> result = gameRepository.searchByList(listId);
+		List<GameMinDTO> dto = result.stream().map(x -> new GameMinDTO(x)).toList();
+		return dto;
 	}
 
 }
